@@ -52,6 +52,28 @@ dat.precip.long |>
   )
 
 #####################################
+# Maximum Likelihood (Weibull)
+#####################################
+llweibull <- function(par, data, neg=F){
+  # a <- par[1]
+  # sigma <- par[2]
+  a <- exp(par[1]) # go from (-inf,inf) to (0,inf)
+  sigma <- exp(par[2]) # go from (-inf,inf) to (0,inf)
+  
+  ll <- sum(log(dweibull(x=data, shape=a, scale=sigma)), na.rm=T)
+  
+  return(ifelse(neg, -ll, ll))
+}
+
+MLEs <- optim(fn = llweibull,
+              par = c(1,1),
+              data = dat.precip.long$Precipitation,
+              neg=T)
+
+(MLEs$par <- exp(MLEs$par)) # transform
+weibull.loglike <- -MLEs$value
+
+#####################################
 # MLE Gamma
 #####################################
 llgamma <- function(data, par, neg=F){
@@ -63,12 +85,14 @@ llgamma <- function(data, par, neg=F){
   return(ifelse(neg, -loglik, loglik))
 }
 
-(mles <- optim(par = c(1,1),
+(gamma.mles <- optim(par = c(1,1),
                fn = llgamma,
                data=dat.precip.long$Precipitation,
                neg=T))
-gamma.alpha.mle <- mles$par[1]
-gamma.alpha.mle <- mles$par[2]
+gamma.alpha.mle <- gamma.mles$par[1]
+gamma.alpha.mle <- gamma.mles$par[2]
+
+gamma.loglike <- -gamma.mles$value
 
 #####################################
 # MLE Log-Normal
@@ -87,11 +111,17 @@ lllognorm <- function(data, par, neg=F){
   return(ifelse(neg, -loglik, loglik))
 }
 
-(mles <- optim(par = c(0, 1),           # Initial guesses for mu and sigma
+(lognorm.mles <- optim(par = c(0, 1),           # Initial guesses for mu and sigma
                fn = lllognorm,          # Log-likelihood function
                data = dat.precip.long$Precipitation,  # Data for fitting
                neg = T))                # To minimize the negative log-likelihood
 
-lognorm.mu.mle <- mles$par[1]
-lognorm.sigma.mle <- mles$par[2]
+lognorm.mu.mle <- lognorm.mles$par[1]
+lognorm.sigma.mle <- lognorm.mles$par[2]
 
+lognorm.loglike <-  -lognorm.mles$value  # Log-likelihood for the Weibull distribution
+
+
+#####################################
+# MLE Log-Normal
+#####################################
