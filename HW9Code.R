@@ -90,7 +90,7 @@ llgamma <- function(data, par, neg=F){
                data=dat.precip.long$Precipitation,
                neg=T))
 gamma.alpha.mle <- gamma.mles$par[1]
-gamma.alpha.mle <- gamma.mles$par[2]
+gamma.beta.mle <- gamma.mles$par[2]
 
 gamma.loglike <- -gamma.mles$value
 
@@ -123,5 +123,12 @@ lognorm.loglike <-  -lognorm.mles$value  # Log-likelihood for the Weibull distri
 
 
 #####################################
-# MLE Log-Normal
+# Better fit according to likelihood ratio
 #####################################
+Q1 <- exp(weibull.loglike - gamma.loglike)
+Q2 <- exp(weibull.loglike - lognorm.loglike)
+Q3 <- exp(gamma.loglike - lognorm.loglike)
+
+Q1
+Q2
+Q3

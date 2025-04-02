@@ -89,16 +89,39 @@ which \texttt{R} cannot differentiate from 0.
   the Log-Normal (see Lecture 17).
   \begin{enumerate}
     \item Compute the MLEs for these data using a Gamma distribution. 
+
+\textbf{Solution:} The MLEs using a Gamma distribution are $\alpha = 4.174581, \beta = 1.189099$. 
+
     \item Compute the MLEs for these data using the Log-Normal distribution.
+
+    \textbf{Solution:} The MLEs for the data using the Log-Normal distribution are $\mu = 1.189099, \sigma = 0.5333435$.
+    
     \item Compute the likelihood ratio to compare the Weibull and the Gamma distribution. 
     Which has a better fit according to the likelhiood ratio?
     \[Q = \frac{L(\{\hat{a}, \hat{\sigma}\}|\mathbf{x})}{L(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{a}, \hat{\sigma}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})\right]}\]
+    \textbf{Solution:} After using \texttt{optim()} to calculate the MLEs for the Weibull, Gamma, and Log-Normal distributions, we can access the likelihood statistic via:
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{weibull.loglike} \hlkwb{<-} \hlopt{-}\hldef{MLEs}\hlopt{$}\hldef{value}
+\hldef{gamma.loglike} \hlkwb{<-} \hlopt{-}\hldef{gamma.mles}\hlopt{$}\hldef{value}
+\hldef{lognorm.loglike} \hlkwb{<-}  \hlopt{-}\hldef{lognorm.mles}\hlopt{$}\hldef{value}
+
+\hldef{Q} \hlkwb{<-} \hlkwd{exp}\hldef{(weibull.loglike} \hlopt{-} \hldef{gamma.loglike)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+We then use the given formula for $Q$ to calculate the likelihood ratio of $2.162312e-07$. This is approximately zero, so the gamma and Weibull fits are essentially the same here. Note that we have to add the negative in, as \texttt{optim()} outputs the positive value, aka. the realized negative log-likelihood. So, we convert to log-likelihood via the negative.
+
+
     \item Compute the likelihood ratio to compare the Weibull and the Log-Normal distribution.
     Which has a better fit according to the likelihood ratio?
     \[Q = \frac{L(\{\hat{a}, \hat{\sigma}\}|\mathbf{x})}{L(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{a}, \hat{\sigma}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})\right]}\]
+        \textbf{Solution:} We repeat the same process to compare between the Weibull and Log-Normal distribution to get $Q = 2.371759e+16$. This is greater than zero and means that the Weibull distribution is a much better fit than the Log-Normal distribution.
     \item Compute the likelihood ratio to compare the Gamma and the Log-Normal distribution.
     Which has a better fit according to the likelhiood ratio?
     \[Q = \frac{L(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})}{L(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})\right]}\]
+    \textbf{Solution:} Again, we repeat the same process as for Weibull and Gamma, resulting in $Q = 1.096862e+23$, which indicates that the Gamma distribution is a better fit than the Log-Normal distribution.
   \end{enumerate}
   \item Optional Coding Challenge. Choose the ``best" distribution and refit the
   model by season.
